@@ -1,2 +1,6 @@
-﻿  Snake.cpp
+﻿  Snake-Game-Team10.cpp
+  Snake.cpp
+C:\Users\Seif Yasser\Desktop\Data Structure\Snake-Game\Snake-Game-Team10\Snake-Game-Team10\Snake.cpp(92,69): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Seif Yasser\Desktop\Data Structure\Snake-Game\Snake-Game-Team10\Snake-Game-Team10\Snake.cpp(96,58): warning C4305: 'argument': truncation from 'double' to 'float'
+  Generating Code...
   Snake-Game-Team10.vcxproj -> C:\Users\Seif Yasser\Desktop\Data Structure\Snake-Game\Snake-Game-Team10\x64\Debug\Snake-Game-Team10.exe

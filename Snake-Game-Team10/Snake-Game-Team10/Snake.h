@@ -2,24 +2,32 @@
 // Snake.h
 // Snake Game using linked-list
 //
-// Created by Seif Yasser on 19/11/2023  "dd/mm/yyyy"
-//
+// Created                  on 19/11/2023  "dd/mm/yyyy"
+// Updated by Seif Yasser   on 21/11/2023
+// Updated by Ali Tarek     on 23/11/2023 
+// Updated by Seif Yasser   on 25/11/2023
+// Updated by Gaser Zaghlol on 26/11/2023
+// Updated by Arwa Faisal   on 27/11/2023
 /*-------------------Snake.h------------------------
 
  This Header line defines the data type Snake for processing Snakes.
+
  Basic operations are:
+ ---------------------------------------------------
  Constructor
- empty:				 Check if Snake is empty
+ Destructor
  insert:			 Insert a node to snake
- erase:				 Remove an item
- display:			 Output the Snake
- <<:				 Output operator
+ erase:				 Remove a node from snake
+ Draw:               Draws the snake on GUI
+ update:             Updates the snake state every frame
+ eventTriggered:     Trigger to control the game speed
+ selfCollision:      Check collisions of snake with itself
+ boundCollision:     Check collisions of snake with boundaries
+ reset:              Resets the snake to the very initial state
+ IsSnakeBody:        checks position of every node on snake
+ EatingCheck:        checks if snake ate food
+ newHighScore:       checks if the player made a new score
 
- *-----------Extra operations-------------------*
-
- deleteByValue:		 Remove item by value
- leftRotation:		 Rotate the Snake to the left
- removeDuplicates:	 Remove Duplicated values
 ---------------------------------------------------*/
 
 #include <iostream>
@@ -28,7 +36,6 @@ using namespace std;
 
 #pragma once // makes the "Snake.h" to be loaded in the memory only one time
 
-typedef int ElementType;
 
 #ifndef SNAKE_H
 #define SNAKE_H
@@ -36,6 +43,7 @@ class Snake
 {
 public:
     /************ Function Members *************/
+
     /********* Class Constructor **********/
     Snake();
     /*-----------------------------------------------------------------
@@ -45,15 +53,7 @@ public:
     Postcodition: An empty Snake object has been constructed; mySize=0.
     -------------------------------------------------------------------*/
 
-    /********* Copy Constructor **********/
-    Snake(const Snake& origSnake);
-    /*-----------------------------------------------------------------
-    Copy constructor
-
-    Precondition: a copy of origSnake is needed
-    Postcodition:A copy of origSnake has been constructed.
-    -------------------------------------------------------------------*/
-
+    
     /********* Class destructor **********/
     ~Snake();
     /*-----------------------------------------------------------------
@@ -63,124 +63,27 @@ public:
     Postcodition: The memory dynamically allocated by the constructor for the array pointed to myArray has been returned to the heap.
     -------------------------------------------------------------------*/
 
-    /********* Assignment operator **********/
-    const Snake& operator=(const Snake& rightHandSide);
+
+    /****** insert Snake node operation ******/
+    void insert(int posx, int poxy, int index);
     /*-----------------------------------------------------------------
-    Assign a copy of a Snake object to the current object.
-
-    Precondition: None.
-    Postcodition: A copy of rightHandSide has been assigned to this object, A const reference to this Snake is returned.
-    -------------------------------------------------------------------*/
-
-    /****** empty operation ******/
-    bool empty() const; // const: means that this function can not change member variables of the class
-    /*-----------------------------------------------------------------
-    Check if a Snake is empty
-
-    Precondition: None
-    Postcodition: True is returned if the Snake is empty, False if not.
-    -------------------------------------------------------------------*/
-
-    /****** insert and erase operations ******/
-    void insert(ElementType dataVal, int index);
-    /*-----------------------------------------------------------------
-    insert a value into the Snake at a given position
+    insert a posX and PosY into the Snake at a given position
 
     Precondition: index is a valid Snake index:0<=index<=mySize
-    Postcodition: dataVal has been inserted into the Snake at position index determined by pos (provided there is room and pos is a legal position).
+    Postcodition: posX and posY has been inserted as data into the Snake Node at position index determined by index.
     -------------------------------------------------------------------*/
 
+
+    /****** erase Snake node operation ******/
     void erase(int index);
     /*-----------------------------------------------------------------
-    Remove a value into the Snake at a given index
+    Remove a node from the Snake at a given index
 
     Precondition: The Snake is not empty;
                   The index satisfies 0<=index<mySize.;
-    Postcodition: element at position index determined by index has been removed (provided pos is a legal position).
+    Postcodition: node at position index determined by index has been removed (provided pos is a legal position).
     -------------------------------------------------------------------*/
 
-    /****** search operation ******/
-    int search(ElementType dataVal);
-    /*-----------------------------------------------------------------
-    Search for data value in this Snake
-
-    Precondition: None;
-    Postcodition: Index of node containing dataVal will be returned,
-    if such a node is found, -1r if not.
-    -------------------------------------------------------------------*/
-
-    /****** output operation ******/
-    void display(ostream& out) const;
-    /*-----------------------------------------------------------------
-    Display a Snake
-
-    Precondition: The pstream out is open;
-    Postcodition: the Snake represented by this Snake object has been inserted into out to be desplayed.
-    -------------------------------------------------------------------*/
-
-    /****** delete by value operation ******/
-    void deleteByValue(ElementType item);
-    /*-----------------------------------------------------------------
-    Delete element by value in a Snake
-
-    Precondition: the item to be deleted;
-    Postcodition: element determined has been deleted.
-    -------------------------------------------------------------------*/
-
-    /****** delete by value operation ******/
-    void leftRotation(int numOfRotations);
-    /*-----------------------------------------------------------------
-    each element of the array will be shifted to its left by one position
-    and the first element of the array will be added to end of the Snake
-
-    Precondition: number of rotations to be made.
-    Postcodition: the Snake represented will be left rotated.
-    -------------------------------------------------------------------*/
-
-    /****** delete by value operation ******/
-    void removeDuplicates();
-    /*-----------------------------------------------------------------
-    Removes duplicated items in a Snake
-
-    Precondition: None
-    Postcodition: the Snake will be updated as the duplicated items will be deleted.
-    -------------------------------------------------------------------*/
-
-    /****** reversing the Snake operation ******/
-    void reverse();
-    /*-----------------------------------------------------------------
-    Reverse the Snake.
-
-    Precondition: None
-    Postcodition: the Snake will be reversed.
-    -------------------------------------------------------------------*/
-
-    /****** ascending checking operation ******/
-    bool ascendingOrder();
-    /*-----------------------------------------------------------------
-    Check if the elements of this Snake are in ascending order.
-
-    Precondition: None
-    Postcodition: returns true if the linked Snake's elements are in ascending order and false if not.
-    -------------------------------------------------------------------*/
-
-    /********* Assignment operator **********/
-    friend istream& operator>>(istream& in, Snake& aSnake);
-    /*-----------------------------------------------------------------
-    Insert an input of the user to the last node of the linked Snake
-
-    Precondition: None.
-    Postcodition: A new node in the end of the linked Snake will be added with data entered by the user during the runtime.
-    -------------------------------------------------------------------*/
-
-    /****** get size operation ******/
-    int size();
-    /*-----------------------------------------------------------------
-    Returns the size of the linked list
-
-    Precondition: None;
-    Postcodition: size of the snake will be returned.
-    -------------------------------------------------------------------*/
 
     /****** draw the snake operation ******/
     void Draw();
@@ -192,31 +95,91 @@ public:
     -------------------------------------------------------------------*/
 
 
-    /****** insert and erase operations ******/
-    void insert(int posx, int poxy,int index);
-    /*-----------------------------------------------------------------
-    insert a value into the Snake at a given position
-
-    Precondition: index is a valid Snake index:0<=index<=mySize
-    Postcodition: dataVal has been inserted into the Snake at position index determined by pos (provided there is room and pos is a legal position).
-    -------------------------------------------------------------------*/
-
-    /********* Class Constructor **********/
-    Snake(int siz);
-    /*-----------------------------------------------------------------
-    Construct a Snake object
-
-    Precondition: None
-    Postcodition: An empty Snake object has been constructed; mySize=0.
-    -------------------------------------------------------------------*/
-
+    /****** update the snake position operation ******/
     void update();
+    /*-----------------------------------------------------------------
+    update the snake position every frame (60 times per second) in the main loop.
 
+    Precondition: None.
+    Postcodition: update every node's position in the snake within the time detected by the eventtriggered function.
+    -------------------------------------------------------------------*/
+
+
+    /****** eventTriggered to control the speed of the snake based on time operation ******/
     bool eventTriggered(double interval);
+    /*-----------------------------------------------------------------
+    check if a specific time has passed like the CLK in the CPU to update the snake position in the GUI
 
-    void append(int x, int y);
-    
-    
+    Precondition: interval of time to trigger after.
+    Postcodition:returns true or false based on if the interval specified passed or not.
+    -------------------------------------------------------------------*/
+
+
+    /****** self collision check operation ******/
+    bool selfCollision();
+    /*-----------------------------------------------------------------
+    checks self collitions of the snake and it's tail
+
+    Precondition: posX and posY of all snake nodes.
+    Postcodition: returns true if the collision happend and false if not.
+    -------------------------------------------------------------------*/
+
+
+    /****** boundaries collision check operation ******/
+    bool boundCollision(bool mod);
+    /*-----------------------------------------------------------------
+    checks boundaries collitions of the snake and walls
+
+    Precondition: posX and posY of snake head and the walls
+    Postcodition: if(classic)returns true if the collision happend and false if not, if(modern) returns false all the time and make the snake get out the other side.
+    -------------------------------------------------------------------*/
+
+
+    /****** reset the snake operation ******/
+    void reset();
+    /*-----------------------------------------------------------------
+    reset the snake to the initial state to play again the game
+
+    Precondition: number of nodes of the snake to loop on and remove all extra nodes
+    Postcodition: the snake is reseted to the initial state and ready to start the game again.
+    -------------------------------------------------------------------*/
+
+
+    /****** is on snake operation ******/
+    bool IsSnakeBody(int x, int y);
+    /*-----------------------------------------------------------------
+    checks if a position (x,y) is on the snake on any node
+
+    Precondition: position *x,y) of element to check on & position of every node of the snake,
+    Postcodition: returns true if the element is on the same position as a snake node.
+    -------------------------------------------------------------------*/
+
+
+    /****** check eating operation ******/
+    bool EatingCheck(int px,int py);
+    /*-----------------------------------------------------------------
+    checks if the snake ate food or not
+
+    Precondition: position of food (x,y) and posiiton of the snake head (x,y) to check on.
+    Postcodition: returns true if the snake head has eaten a food.
+    -------------------------------------------------------------------*/
+
+
+    /****** high score operation ******/
+    bool newHighScore();
+    /*-----------------------------------------------------------------
+    checks if the player made a new high score or not
+
+    Precondition: old score.
+    Postcodition: returns true if the player made a new highscore and false if not.
+    -------------------------------------------------------------------*/
+
+
+    /****** x and y for the next direction of the snake nodes ******/
+    int x = 1, y = 0;
+    int score = 0;
+    int highScore = 0;
+
 private:
     
 
@@ -225,18 +188,15 @@ private:
     {
     public:
         //------- Node data members
-        ElementType data;
         Node* next;
         int PosX;
         int PosY;
-
         //------- Node operations
         //------- Default constructor
         Node() : next(0) {} // initialize next to zero
 
         //------- Explicit-value constructor
-        Node(ElementType dataValue) : data(dataValue), next(0) {}
-        Node(int posx,int posy):PosX(posx),PosY(posy),next(0) {}
+        Node(int posx, int posy) :PosX(posx), PosY(posy), next(0) {}
         // initialize dat to dataValue and next to zero
     };
     //------- End of Node class
@@ -244,19 +204,10 @@ private:
     typedef Node* NodePointer;
 
     /******** Data Members ********/
-    
+    int mySize; // current size of the snake=score+1
+    NodePointer first;
     Texture2D texture;
     double lastUpdatedTime;
-public:
-    int mySize; // current size of the list
-    NodePointer first;
-    int x=1, y=0;
+
 }; //------- end of the List class
 #endif
-
-//---------- Prototype of output operator
-ostream& operator<<(ostream& out, const Snake& asnake); // operator << overloading
-
-/*****************************************
-    overloading the << operator that when the compiler sees the << operator forget about the cout and come here to my overloaded operator
-*****************************************/

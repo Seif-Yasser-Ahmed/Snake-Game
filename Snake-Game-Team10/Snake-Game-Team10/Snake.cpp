@@ -2,41 +2,24 @@
 #include <stdio.h>
 #include <cassert>
 #include "raylib.h"
+
 using namespace std;
+
 
 //--- Definition of the class constuctor
 Snake::Snake() // scope operator used to define that Snake() is member function in class Snake
     : first(0), mySize(0)
 {
-    insert(6, 8, 0);
-    insert(5, 8, 0);
-    insert(4, 8, 0);
-    Image image = LoadImage("Graphics/head.png");
+    insert(2 , 2, 0);
+    Image image = LoadImage("Graphics/right-head.png");
     ImageResizeNN(&image, 30, 30);
     texture = LoadTextureFromImage(image);
     UnloadImage(image);
 }
 
-//--- Definition of the copy constructor
-Snake::Snake(const Snake& origSnake)
-    : first(0), mySize(origSnake.mySize)
-{
-    if (mySize == 0)
-        return;
-    Snake::NodePointer origPtr, lastPtr;
-    first = new Node(origSnake.first->data);
-    lastPtr = first;
-    origPtr = origSnake.first->next;
-    while (origPtr != 0) // till origPtr points to last next in last node that it is NULL
-    {
-        lastPtr->next = new Node(origPtr->data);
-        origPtr = origPtr->next; // it's like origPtr++
-        lastPtr = lastPtr->next; // it's like lastPtr++
-    }
-}
 
 //--- Definition of the class destructor
-inline Snake::~Snake()
+Snake::~Snake()
 {
     Snake::NodePointer prev = first,
         ptr;
@@ -47,110 +30,6 @@ inline Snake::~Snake()
         prev = ptr;
     }
     UnloadTexture(texture);
-
-}
-
-//--- Definition of size()
-int Snake::size() {
-    int size = 1;
-    NodePointer ptr = first;
-    while (ptr->next != 0) {
-        ptr = ptr->next;
-        size++;
-    }
-    return size;
-}
-
-
-//--- Definition of empty()
-bool Snake::empty() const
-{
-    return mySize == 0;
-}
-
-//--- Deifinition of the assignment operator
-const Snake& Snake::operator=(const Snake& rightSide)
-{
-    mySize = rightSide.mySize;
-    first = 0;
-    if (mySize == 0)
-        return *this;
-    if (this != &rightSide)
-    {
-        this->~Snake();
-        Snake::NodePointer origPtr, lastPtr;
-        first = new Node(rightSide.first->data);
-        lastPtr = first;
-        origPtr = rightSide.first->next;
-        while (origPtr != 0) // till origPtr points to last next in last node that it is NULL
-        {
-            lastPtr->next = new Node(origPtr->data);
-            origPtr = origPtr->next; // it's like origPtr++
-            lastPtr = lastPtr->next; // it's like lastPtr++
-        }
-    }
-    return *this;
-}
-
-//--- Definition of display()
-void Snake::display(ostream& out) const // insted of "cout" to output on any output stream or output operator whatever what it is using ostream
-{
-    Snake::NodePointer Ptr = first;
-    while (Ptr != 0)
-    {
-        out << Ptr->data << "	";
-        Ptr = Ptr->next;
-    }
-}
-/*------------------------------------------------------------------------------------------------------------------ */
-/*overloading the << operator that it displays the Snake immediatlely once it sees Snake after the << operator
-hytl3 3al ostream whatever its cout or what*/
-/*------------------------------------------------------------------------------------------------------------------ */
-
-//--- Definition of output operator
-ostream& operator<<(ostream& out, const Snake& aSnake)
-
-{
-    aSnake.display(out); // display on out operator
-    return out;
-}
-
-//--- Definition of the input operator
-istream& operator>>(istream& in, Snake& aSnake)
-{
-    ElementType val;
-    in >> val;
-    aSnake.insert(val, aSnake.mySize); // Needed friend in header file to access mySize
-    return in;
-}
-
-//--- Definition of insert()
-void Snake::insert(ElementType dataVal, int index)
-{
-    if (index < 0 || index > mySize)
-    {
-        // cerr waits for you to see the error and take any action
-        cerr << "*** Illegal location to insert -- " << index << " --in this Snake ***\n";
-        return; // btseb el function w trg3 mkan ma 7sal calling
-        // exit(1):terminates all the program and get out
-    }
-    mySize++;
-    Snake::NodePointer newPtr = new Node(dataVal),
-        predPtr = first;
-    if (index == 0)
-    {
-        newPtr->next = first;
-        first = newPtr;
-    }
-    else
-    {
-        for (int i = 1; i < index; i++) // hanm4i pointer lhad elnode aly h3ml insert b3dha
-        {
-            predPtr = predPtr->next;
-        }
-        newPtr->next = predPtr->next;
-        predPtr->next = newPtr;
-    }
 }
 
 
@@ -171,7 +50,6 @@ void Snake::insert(int posx,int posy, int index)
     {
         newPtr->next = first;
         first = newPtr;
-        
     }
     else
     {
@@ -184,34 +62,59 @@ void Snake::insert(int posx,int posy, int index)
     }
 }
 
-Snake::Snake(int siz) : first(0), mySize(0) {
-    
 
-}
-
+//--- Definition of Draw()
 void Snake::Draw() {
     NodePointer ptr = first;
     while (ptr != 0) {
-        int x = ptr->PosX;
-        int y = ptr->PosY;
-        DrawTexture(texture, x * 30, y * 30, WHITE);
-        //DrawRectangle(x * 30, y * 30, 30, 30, DARKGREEN);
+        int px = ptr->PosX;
+        int py = ptr->PosY;
+        int dir = 0;
+        Rectangle segment = Rectangle{ float(px * 30),float(py * 30),30,30};
+        if (ptr == first) {
+            //---- if you want an image for the first node
+            if (x == 0 && y == 1) {
+                dir = 90;
+                px++;
+            }
+            else if (x == 1 && y == 0) {
+                dir = 0;
+            }
+            else if (x == 0 && y == -1) {
+                dir = 270;
+                py++;
+            }
+            else if (x == -1 && y == 0) {
+                dir = 180;
+                px++;
+                py++;
+            }
+            DrawTextureEx(texture, {float(px * 30), float(py * 30)},dir,1, GREEN);
+            //DrawRectangleRounded(segment, 0.7, 6, DARKBLUE);
+        }else{ 
+            //DrawRectangle(px * 30, py * 30, 30, 30, BLUE); 
+            DrawRectangleRounded(segment,0.7, 6,DARKGREEN);
+        }
         ptr = ptr->next;
     }
 }
 
+
+//--- Definition of update()
 void Snake::update() {
-    /*first->next->PosX = first->PosX;
-    first->next->PosY = first->PosY;
-    first->PosX = first->PosX + x;
-    first->PosY = first->PosY + y;*/
     NodePointer ptr = first;
-    erase(0);
-    insert(ptr->PosX + x, ptr->PosY + y, mySize);
-    
-    //append(first->PosX +x, first->PosY+y);
+    if (mySize == 1) {
+        ptr->PosX += x;
+        ptr->PosY += y;
+    }
+    else {
+        erase(mySize - 1);
+        insert(ptr->PosX + x, ptr->PosY + y, 0);
+    }
 }
 
+
+//--- Definition of eventTriggered()
 bool Snake::eventTriggered(double interval) {
     double currentTime = GetTime();
     if (currentTime - lastUpdatedTime >= interval) {
@@ -219,21 +122,6 @@ bool Snake::eventTriggered(double interval) {
         return true;
     }
     return false;
-}
-
-void Snake::append(int x,int y)
-{
-    NodePointer temp = first;
-    while (temp->next != 0)
-    {
-        temp = temp->next;
-    }
-    NodePointer newnode = new Node();
-    newnode->PosX = x;
-    newnode->PosY = y;
-
-    temp->next = newnode;
-    newnode->next = 0;
 }
 
 
@@ -268,53 +156,104 @@ void Snake::erase(int index)
     }
 }
 
-/*
-//--- Definition of deleteByValue()
-void Snake::deleteByValue(ElementType item) {
-    Snake::NodePointer Ptr = first;
-    int index = 0;
-    while (Ptr->next != 0) {
-        if (Ptr->data == item)
-            erase(index);
-        Ptr = Ptr->next;
-        index++;
+
+//--- Definition of boundCollision()
+bool Snake::boundCollision(bool mod)
+{
+    if (!mod) {
+        if (first->PosX == -1 || first->PosY == 30 || first->PosY == -1 || first->PosX == 34)
+        {
+            return true;
+        }
+        return false;
+    }
+    else {
+        if (first->PosX == -1)
+        {
+            first->PosX = 33;
+        }
+        if (first->PosY == 30)
+        {
+            first->PosY = 0;
+        }
+        if (first->PosY == -1)
+        {
+            first->PosY = 29;
+        }
+        if (first->PosX == 34)
+        {
+            first->PosX = 0;
+        }
+        return false;
     }
 }
 
-//--- Definition of reverse()
-void Snake::reverse() {
-    Snake::NodePointer currentPtr = first, nextPtr, prevPtr = 0;
-    while (currentPtr != 0) {
-        nextPtr = currentPtr->next; //make nextPtr points at the next node
-        currentPtr->next = prevPtr; //make the next pointer in the current node points at previous node to reverse it
-        prevPtr = currentPtr;		//make the prevPtr points at the current node to remake the loop
-        currentPtr = nextPtr;		//make the nextPtr points at the next node
-    }
-    Snake::first = prevPtr;
-    /****************** another way to do it ******************
 
-    for (; currentPtr1 != 0; prevPtr1 = currentPtr1, currentPtr1 = nextPtr1) {
-        nextPtr1 = currentPtr1->next;
-        currentPtr1->next = prevPtr1;
+//--- Definition of selfCollision()
+bool Snake::selfCollision()
+{
+    NodePointer ptr = first->next;
+    while (ptr != NULL)
+    {
+        if (first->PosX == ptr->PosX && first->PosY == ptr->PosY)
+        {
+            return true;
+        }
+        ptr = ptr->next;
     }
-    Snake::first = prevPtr1;
+    return false;
 }
 
 
-//--- Definition of ascendingOrder()
-bool Snake::ascendingOrder() {
-    NodePointer prevPtr = first, tempPtr = first->next;
-    if (mySize <= 1) {
-        cout << "********** the Snake has only one element **********" << endl;
+//--- Definition of reset()
+void Snake::reset() {
+    int siz = mySize;
+    if (mySize > 1) {
+        for (int i = 0; i < siz - 1; i++) {
+            erase(0);
+        }
+    }
+    NodePointer ptr = first;
+    for (int i = 0; i < 1; i++) {
+        ptr->PosX = 2 - i;
+        ptr->PosY = 2;
+        ptr = ptr->next;
+    }
+    x = 1;
+    y = 0;
+    score = 0;
+}
+
+
+//--- Definition of IsSnakeBody()
+bool Snake::IsSnakeBody(int x, int y) {
+    NodePointer ptr = first;
+    while (ptr != 0) {
+        if (ptr->PosX == x && ptr->PosY == y) {
+            return true;
+        }
+        ptr = ptr->next;
+    }
+    return false;
+}
+
+
+//--- Definition of EatingCheck()
+bool Snake::EatingCheck(int px, int py) {
+    bool eaten = false;
+    if (first->PosX ==px && first->PosY == py) {
+        insert(first->PosX+x, first->PosY+y, 0);
+        score++;
+        eaten = true;
+    }
+    return eaten;
+}
+
+
+bool Snake::newHighScore() {
+    if (score >= highScore) {
+        highScore = score;
         return true;
     }
-    while (prevPtr->next != 0) {
-        if (prevPtr->data > tempPtr->data) {
-            return false;
-        }
-        prevPtr = prevPtr->next;
-        tempPtr = tempPtr->next;
-    }
-    return true;
+    return false;
 }
-*/
